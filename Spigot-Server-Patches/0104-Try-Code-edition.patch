@@ -1,0 +1,38 @@
+From af0cb0355df068f5bed61ad13b15423af2a06987 Mon Sep 17 00:00:00 2001
+From: Shurisko <thomas.bellettini@epitech.eu>
+Date: Thu, 15 Jun 2023 20:43:55 +0200
+Subject: [PATCH] Try Code edition
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index 459730be2..b56faa62d 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -1,10 +1,7 @@
+ package org.bukkit.craftbukkit.event;
+ 
+ import java.net.InetAddress;
+-import java.util.ArrayList;
+-import java.util.EnumMap;
+-import java.util.List;
+-import java.util.Map;
++import java.util.*;
+ 
+ import com.google.common.base.Function;
+ import com.google.common.base.Functions;
+@@ -205,7 +202,11 @@ public class CraftEventFactory {
+         Block blockClicked = craftWorld.getBlockAt(position.getX(), position.getY(), position.getZ());
+         BlockFace blockFace = CraftBlock.notchToBlockFace(direction);
+ 
+-        Bukkit.getLogger().info("Je suis trigger !");
++
++        if (itemInHand.getItemIdentifier().isEmpty())
++            itemInHand.setItemIdentifier(UUID.randomUUID().toString());
++
++        Bukkit.getLogger().info("Je suis trigger ! [" + itemInHand.getItemIdentifier() + "]");
+ 
+         if (position.getY() > 255) {
+             blockClicked = null;
+-- 
+2.40.1.windows.1
+

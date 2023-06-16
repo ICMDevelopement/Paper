@@ -1,0 +1,22 @@
+From bc6e8e14c52a6c1334d306b8b8f08661dd04c9eb Mon Sep 17 00:00:00 2001
+From: Shurisko <thomas.bellettini@epitech.eu>
+Date: Fri, 16 Jun 2023 13:06:45 +0200
+Subject: [PATCH] Patch meta
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index ddce2580f..45dd46cd1 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -210,6 +210,8 @@ public class CraftEventFactory {
+         if (meta.getIdentifier() == null) {
+             meta.setIdentifier(UUID.randomUUID().toString());
+         }
++
++        itemInHand.setItemMeta(meta);
+         Bukkit.getLogger().info("Je suis trigger ! [" + meta.getIdentifier() + "]");
+ 
+         if (position.getY() > 255) {
+-- 
+2.40.1.windows.1
+

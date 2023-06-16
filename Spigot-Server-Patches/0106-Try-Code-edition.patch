@@ -1,0 +1,165 @@
+From 93e5719196e157732b4ff576b7dde7038d0f810b Mon Sep 17 00:00:00 2001
+From: Shurisko <thomas.bellettini@epitech.eu>
+Date: Fri, 16 Jun 2023 11:30:39 +0200
+Subject: [PATCH] Try Code edition
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index 350e6f7d3..05d14bf26 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -57,6 +57,7 @@ import org.bukkit.event.player.*;
+ import org.bukkit.event.server.ServerListPingEvent;
+ import org.bukkit.inventory.InventoryView;
+ import org.bukkit.inventory.meta.BookMeta;
++import org.bukkit.inventory.meta.ItemMeta;
+ 
+ public class CraftEventFactory {
+     public static final DamageSource MELTING = CraftDamageSource.copyOf(DamageSource.BURN);
+@@ -203,10 +204,10 @@ public class CraftEventFactory {
+         BlockFace blockFace = CraftBlock.notchToBlockFace(direction);
+ 
+         org.bukkit.inventory.ItemStack itm = CraftItemStack.asBukkitCopy(itemstack);
+-        if (itemInHand.getItemIdentifier().isEmpty())
+-            itemInHand.setItemIdentifier(UUID.randomUUID().toString());
+ 
+-        Bukkit.getLogger().info("Je suis trigger ! [" + itemInHand.getItemIdentifier() + "]");
++        ItemMeta meta = itemInHand.getItemMeta();
++
++        Bukkit.getLogger().info("Je suis trigger ! [" + meta.getDisplayName() + "]");
+ 
+         if (position.getY() > 255) {
+             blockClicked = null;
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+index eaaa6a11a..a919f7b43 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+@@ -220,12 +220,17 @@ class CraftMetaItem implements ItemMeta, Repairable {
+     @Specific(Specific.To.NBT)
+     static final ItemMetaKey UNBREAKABLE = new ItemMetaKey("Unbreakable"); // Spigot
+ 
++    @Specific(Specific.To.NBT)
++    static final ItemMetaKey ITEM_IDENTIFIER = new ItemMetaKey("Identifier"); // Shurisko
++
+     private String displayName;
+     private List<String> lore;
+     private Map<Enchantment, Integer> enchantments;
+     private int repairCost;
+     private int hideFlag;
+ 
++    private String identifier;
++
+     private static final Set<String> HANDLED_TAGS = Sets.newHashSet();
+ 
+     private final Map<String, NBTBase> unhandledTags = new HashMap<String, NBTBase>();
+@@ -236,6 +241,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         }
+ 
+         this.displayName = meta.displayName;
++        this.identifier = (meta.identifier == null ? "" : meta.identifier);
+ 
+         if (meta.hasLore()) {
+             this.lore = new ArrayList<String>(meta.lore);
+@@ -259,6 +265,12 @@ class CraftMetaItem implements ItemMeta, Repairable {
+                 displayName = limit( display.getString(NAME.NBT), 1024 ); // Spigot
+             }
+ 
++            if (display.hasKey(ITEM_IDENTIFIER.NBT)) this.identifier = limit(display.getString(ITEM_IDENTIFIER.NBT), 1024);
++            else {
++                tag.setString(ITEM_IDENTIFIER.NBT, "");
++                this.identifier = "";
++            }
++
+             if (display.hasKey(LORE.NBT)) {
+                 NBTTagList list = display.getList(LORE.NBT, 8);
+                 lore = new ArrayList<String>(list.size());
+@@ -481,6 +493,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
+ 
+     CraftMetaItem(Map<String, Object> map) {
+         setDisplayName(SerializableMeta.getString(map, NAME.BUKKIT, true));
++        this.identifier = SerializableMeta.getString(map, ITEM_IDENTIFIER.BUKKIT, false);
+ 
+         Iterable<?> lore = SerializableMeta.getObject(Iterable.class, map, LORE.BUKKIT, true);
+         if (lore != null) {
+@@ -560,6 +573,9 @@ class CraftMetaItem implements ItemMeta, Repairable {
+             setDisplayTag(itemTag, NAME.NBT, new NBTTagString(displayName));
+         }
+ 
++        if (this.identifier != null)
++            setIdentifier(itemTag, ITEM_IDENTIFIER.NBT, new NBTTagString(identifier));
++
+         if (hasLore()) {
+             setDisplayTag(itemTag, LORE.NBT, createStringList(lore));
+         }
+@@ -619,6 +635,16 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         tag.set(key.NBT, list);
+     }
+ 
++    void setIdentifier(NBTTagCompound tag, String key, NBTBase value) {
++        final NBTTagCompound display = tag.getCompound(ITEM_IDENTIFIER.NBT);
++
++        if (!tag.hasKey(ITEM_IDENTIFIER.NBT)) {
++            tag.set(ITEM_IDENTIFIER.NBT, display);
++        }
++
++        display.set(key, value);
++    }
++
+     void setDisplayTag(NBTTagCompound tag, String key, NBTBase value) {
+         final NBTTagCompound display = tag.getCompound(DISPLAY.NBT);
+ 
+@@ -795,6 +821,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
+                 && (this.hasRepairCost() ? that.hasRepairCost() && this.repairCost == that.repairCost : !that.hasRepairCost())
+                 && (this.unhandledTags.equals(that.unhandledTags))
+                 && (this.hideFlag == that.hideFlag)
++                && (this.identifier.equalsIgnoreCase(that.identifier))
+                 && (this.spigot.isUnbreakable() == that.spigot.isUnbreakable()); // Spigot
+     }
+ 
+@@ -820,6 +847,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         hash = 61 * hash + (hasLore() ? this.lore.hashCode() : 0);
+         hash = 61 * hash + (hasEnchants() ? this.enchantments.hashCode() : 0);
+         hash = 61 * hash + (hasRepairCost() ? this.repairCost : 0);
++        hash = 61 * hash + (identifier != null ? this.identifier.hashCode() : 0);
+         hash = 61 * hash + unhandledTags.hashCode();
+         hash = 61 * hash + hideFlag;
+         hash = 61 * hash + (spigot.isUnbreakable() ? 1231 : 1237); // Spigot
+@@ -844,6 +872,16 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         }
+     }
+ 
++    @Override
++    public String getIdentifier() {
++        return this.identifier;
++    }
++
++    @Override
++    public void setIdentifier(String identifier) {
++        this.identifier = identifier;
++    }
++
+     public final Map<String, Object> serialize() {
+         ImmutableMap.Builder<String, Object> map = ImmutableMap.builder();
+         map.put(SerializableMeta.TYPE_FIELD, SerializableMeta.classMap.get(getClass()));
+@@ -857,6 +895,10 @@ class CraftMetaItem implements ItemMeta, Repairable {
+             builder.put(NAME.BUKKIT, displayName);
+         }
+ 
++        if (identifier != null) {
++            builder.put(ITEM_IDENTIFIER.BUKKIT, identifier);
++        }
++
+         if (hasLore()) {
+             builder.put(LORE.BUKKIT, ImmutableList.copyOf(lore));
+         }
+@@ -967,6 +1009,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
+                 HANDLED_TAGS.addAll(Arrays.asList(
+                         UNBREAKABLE.NBT, // Spigot
+                         DISPLAY.NBT,
++                        ITEM_IDENTIFIER.NBT, // ICM
+                         REPAIR.NBT,
+                         ENCHANTMENTS.NBT,
+                         HIDEFLAGS.NBT,
+-- 
+2.40.1.windows.1
+

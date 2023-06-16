@@ -1,0 +1,139 @@
+From d68441543973cdb04e88d0292bef03a6bd89fe70 Mon Sep 17 00:00:00 2001
+From: Shurisko <thomas.bellettini@epitech.eu>
+Date: Fri, 16 Jun 2023 12:22:26 +0200
+Subject: [PATCH] Patch meta
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+index 59a14e2b4..7b5ead8e8 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+@@ -220,16 +220,12 @@ class CraftMetaItem implements ItemMeta, Repairable {
+     @Specific(Specific.To.NBT)
+     static final ItemMetaKey UNBREAKABLE = new ItemMetaKey("Unbreakable"); // Spigot
+ 
+-    @Specific(Specific.To.NBT)
+-    static final ItemMetaKey ITEM_IDENTIFIER = new ItemMetaKey("Identifier"); // Shurisko
+-
+     private String displayName;
+     private List<String> lore;
+     private Map<Enchantment, Integer> enchantments;
+     private int repairCost;
+     private int hideFlag;
+ 
+-    private String identifier;
+ 
+     private static final Set<String> HANDLED_TAGS = Sets.newHashSet();
+ 
+@@ -241,7 +237,6 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         }
+ 
+         this.displayName = meta.displayName;
+-        this.identifier = (meta.identifier == null ? "" : meta.identifier);
+ 
+         if (meta.hasLore()) {
+             this.lore = new ArrayList<String>(meta.lore);
+@@ -265,8 +260,6 @@ class CraftMetaItem implements ItemMeta, Repairable {
+                 displayName = limit( display.getString(NAME.NBT), 1024 ); // Spigot
+             }
+ 
+-            if (display.hasKey(ITEM_IDENTIFIER.NBT)) this.identifier = limit(display.getString(ITEM_IDENTIFIER.NBT), 1024);
+-
+             if (display.hasKey(LORE.NBT)) {
+                 NBTTagList list = display.getList(LORE.NBT, 8);
+                 lore = new ArrayList<String>(list.size());
+@@ -441,7 +434,6 @@ class CraftMetaItem implements ItemMeta, Repairable {
+                 NBTTagCompound entry = new NBTTagCompound();
+                 entry.set(ATTRIBUTES_UUID_HIGH.NBT, nbttagcompound.get(ATTRIBUTES_UUID_HIGH.NBT));
+                 entry.set(ATTRIBUTES_UUID_LOW.NBT, nbttagcompound.get(ATTRIBUTES_UUID_LOW.NBT));
+-                entry.set(ATTRIBUTES_IDENTIFIER.NBT, nbttagcompound.get(ATTRIBUTES_IDENTIFIER.NBT));
+                 entry.set(ATTRIBUTES_NAME.NBT, nbttagcompound.get(ATTRIBUTES_NAME.NBT));
+                 entry.set(ATTRIBUTES_VALUE.NBT, nbttagcompound.get(ATTRIBUTES_VALUE.NBT));
+                 entry.set(ATTRIBUTES_TYPE.NBT, nbttagcompound.get(ATTRIBUTES_TYPE.NBT));
+@@ -489,7 +481,6 @@ class CraftMetaItem implements ItemMeta, Repairable {
+ 
+     CraftMetaItem(Map<String, Object> map) {
+         setDisplayName(SerializableMeta.getString(map, NAME.BUKKIT, true));
+-        this.identifier = SerializableMeta.getString(map, ITEM_IDENTIFIER.BUKKIT, false);
+ 
+         Iterable<?> lore = SerializableMeta.getObject(Iterable.class, map, LORE.BUKKIT, true);
+         if (lore != null) {
+@@ -569,8 +560,6 @@ class CraftMetaItem implements ItemMeta, Repairable {
+             setDisplayTag(itemTag, NAME.NBT, new NBTTagString(displayName));
+         }
+ 
+-        if (this.identifier != null)
+-            setIdentifier(itemTag, ITEM_IDENTIFIER.NBT, new NBTTagString(identifier));
+ 
+         if (hasLore()) {
+             setDisplayTag(itemTag, LORE.NBT, createStringList(lore));
+@@ -631,16 +620,6 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         tag.set(key.NBT, list);
+     }
+ 
+-    void setIdentifier(NBTTagCompound tag, String key, NBTBase value) {
+-        final NBTTagCompound display = tag.getCompound(ITEM_IDENTIFIER.NBT);
+-
+-        if (!tag.hasKey(ITEM_IDENTIFIER.NBT)) {
+-            tag.set(ITEM_IDENTIFIER.NBT, display);
+-        }
+-
+-        display.set(key, value);
+-    }
+-
+     void setDisplayTag(NBTTagCompound tag, String key, NBTBase value) {
+         final NBTTagCompound display = tag.getCompound(DISPLAY.NBT);
+ 
+@@ -817,7 +796,6 @@ class CraftMetaItem implements ItemMeta, Repairable {
+                 && (this.hasRepairCost() ? that.hasRepairCost() && this.repairCost == that.repairCost : !that.hasRepairCost())
+                 && (this.unhandledTags.equals(that.unhandledTags))
+                 && (this.hideFlag == that.hideFlag)
+-                && ((this.identifier != null && that.identifier != null) && (this.identifier.equalsIgnoreCase(that.identifier)))
+                 && (this.spigot.isUnbreakable() == that.spigot.isUnbreakable()); // Spigot
+     }
+ 
+@@ -843,7 +821,6 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         hash = 61 * hash + (hasLore() ? this.lore.hashCode() : 0);
+         hash = 61 * hash + (hasEnchants() ? this.enchantments.hashCode() : 0);
+         hash = 61 * hash + (hasRepairCost() ? this.repairCost : 0);
+-        hash = 61 * hash + (identifier != null ? this.identifier.hashCode() : 0);
+         hash = 61 * hash + unhandledTags.hashCode();
+         hash = 61 * hash + hideFlag;
+         hash = 61 * hash + (spigot.isUnbreakable() ? 1231 : 1237); // Spigot
+@@ -870,12 +847,12 @@ class CraftMetaItem implements ItemMeta, Repairable {
+ 
+     @Override
+     public String getIdentifier() {
+-        return this.identifier;
++        return null;
+     }
+ 
+     @Override
+     public void setIdentifier(String identifier) {
+-        this.identifier = identifier;
++
+     }
+ 
+     public final Map<String, Object> serialize() {
+@@ -891,10 +868,6 @@ class CraftMetaItem implements ItemMeta, Repairable {
+             builder.put(NAME.BUKKIT, displayName);
+         }
+ 
+-        if (identifier != null) {
+-            builder.put(ITEM_IDENTIFIER.BUKKIT, identifier);
+-        }
+-
+         if (hasLore()) {
+             builder.put(LORE.BUKKIT, ImmutableList.copyOf(lore));
+         }
+@@ -1005,7 +978,6 @@ class CraftMetaItem implements ItemMeta, Repairable {
+                 HANDLED_TAGS.addAll(Arrays.asList(
+                         UNBREAKABLE.NBT, // Spigot
+                         DISPLAY.NBT,
+-                        ITEM_IDENTIFIER.NBT, // ICM
+                         REPAIR.NBT,
+                         ENCHANTMENTS.NBT,
+                         HIDEFLAGS.NBT,
+-- 
+2.40.1.windows.1
+

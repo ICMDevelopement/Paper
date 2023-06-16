@@ -1,0 +1,51 @@
+From 6950f0d65a5696a47dee1d19c1d810f75a14e398 Mon Sep 17 00:00:00 2001
+From: Shurisko <thomas.bellettini@epitech.eu>
+Date: Thu, 15 Jun 2023 20:11:31 +0200
+Subject: [PATCH] Try Code edition
+
+
+diff --git a/pom.xml b/pom.xml
+index 644305e68..696538a92 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -225,24 +225,6 @@
+                     </execution>
+                 </executions>
+             </plugin>
+-            <!-- Gotta go after shade plugin -->
+-            <plugin>
+-                <groupId>net.md-5</groupId>
+-                <artifactId>specialsource-maven-plugin</artifactId>
+-		<version>1.2.3</version> <!-- paper - bump log4j -->
+-                <executions>
+-                    <execution>
+-                        <phase>package</phase>
+-                        <goals>
+-                            <goal>remap</goal>
+-                        </goals>
+-                        <configuration>
+-                            <srgIn>${project.basedir}/deprecation-mappings.csrg</srgIn>
+-                            <accessIn>${project.basedir}/deprecation-mappings.at</accessIn>
+-                        </configuration>
+-                    </execution>
+-                </executions>
+-            </plugin>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-compiler-plugin</artifactId>
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index db915033b..459730be2 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -205,6 +205,8 @@ public class CraftEventFactory {
+         Block blockClicked = craftWorld.getBlockAt(position.getX(), position.getY(), position.getZ());
+         BlockFace blockFace = CraftBlock.notchToBlockFace(direction);
+ 
++        Bukkit.getLogger().info("Je suis trigger !");
++
+         if (position.getY() > 255) {
+             blockClicked = null;
+             switch (action) {
+-- 
+2.40.1.windows.1
+

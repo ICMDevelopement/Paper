@@ -1,0 +1,106 @@
+From 06bfabc4ab9e56802d55d3db72655f78ef919cc8 Mon Sep 17 00:00:00 2001
+From: Shurisko <thomas.bellettini@epitech.eu>
+Date: Fri, 16 Jun 2023 12:45:21 +0200
+Subject: [PATCH] Patch meta
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+index 35b9d6432..8978382e6 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+@@ -456,6 +456,10 @@ class CraftMetaItem implements ItemMeta, Repairable {
+                 unhandledTags.put(key, tag.get(key));
+             }
+         }
++
++        if (tag.hasKey(ITEM_IDENTIFIER.NBT))
++            this.identifier = tag.getString(ITEM_IDENTIFIER.NBT);
++
+         // Spigot start
+         if ( tag.hasKey( UNBREAKABLE.NBT ) )
+         {
+@@ -514,6 +518,8 @@ class CraftMetaItem implements ItemMeta, Repairable {
+             }
+         }
+ 
++        String str = SerializableMeta.getString(map, ITEM_IDENTIFIER.BUKKIT, true);
++
+         // Spigot start
+         Boolean unbreakable = SerializableMeta.getObject( Boolean.class, map, UNBREAKABLE.BUKKIT, true );
+         if ( unbreakable != null )
+@@ -585,6 +591,9 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         }
+         // Spigot end
+ 
++        if (identifier != null)
++            itemTag.setString(ITEM_IDENTIFIER.NBT, identifier);
++
+ 
+         if (hasRepairCost()) {
+             itemTag.setInt(REPAIR.NBT, repairCost);
+@@ -644,7 +653,11 @@ class CraftMetaItem implements ItemMeta, Repairable {
+ 
+     @Overridden
+     boolean isEmpty() {
+-        return !(hasDisplayName() || hasEnchants() || hasLore() || hasRepairCost() || !unhandledTags.isEmpty() || hideFlag != 0 || spigot.isUnbreakable()); // Spigot
++        return !(hasDisplayName() || hasEnchants() || hasLore() || hasIdentifier() || hasRepairCost() || !unhandledTags.isEmpty() || hideFlag != 0 || spigot.isUnbreakable()); // Spigot
++    }
++
++    public boolean hasIdentifier () {
++        return !Strings.isNullOrEmpty(identifier);
+     }
+ 
+     public String getDisplayName() {
+@@ -803,6 +816,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
+                 && (this.hasRepairCost() ? that.hasRepairCost() && this.repairCost == that.repairCost : !that.hasRepairCost())
+                 && (this.unhandledTags.equals(that.unhandledTags))
+                 && (this.hideFlag == that.hideFlag)
++                && ((this.hasIdentifier() ? that.hasIdentifier() && this.identifier.equals(that.identifier) : !that.hasIdentifier()))
+                 && (this.spigot.isUnbreakable() == that.spigot.isUnbreakable()); // Spigot
+     }
+ 
+@@ -831,6 +845,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         hash = 61 * hash + unhandledTags.hashCode();
+         hash = 61 * hash + hideFlag;
+         hash = 61 * hash + (spigot.isUnbreakable() ? 1231 : 1237); // Spigot
++        hash = 61 * hash + (hasIdentifier() ? this.identifier.hashCode() : 0); // Spigot
+         return hash;
+     }
+ 
+@@ -854,12 +869,12 @@ class CraftMetaItem implements ItemMeta, Repairable {
+ 
+     @Override
+     public String getIdentifier() {
+-        return null;
++        return identifier;
+     }
+ 
+     @Override
+     public void setIdentifier(String identifier) {
+-
++        this.identifier = identifier;
+     }
+ 
+     public final Map<String, Object> serialize() {
+@@ -890,6 +905,10 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         {
+             builder.put( UNBREAKABLE.BUKKIT, true );
+         }
++
++        if (hasIdentifier())
++            builder.put(ITEM_IDENTIFIER.BUKKIT, identifier);
++
+         // Spigot end
+ 
+ 
+@@ -984,6 +1003,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
+             if (HANDLED_TAGS.isEmpty()) {
+                 HANDLED_TAGS.addAll(Arrays.asList(
+                         UNBREAKABLE.NBT, // Spigot
++                        ITEM_IDENTIFIER.NBT,
+                         DISPLAY.NBT,
+                         REPAIR.NBT,
+                         ENCHANTMENTS.NBT,
+-- 
+2.40.1.windows.1
+

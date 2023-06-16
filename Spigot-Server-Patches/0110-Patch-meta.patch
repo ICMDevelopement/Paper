@@ -1,0 +1,46 @@
+From 6567785c5296bf6ef5ab0c65084da6c409c94fea Mon Sep 17 00:00:00 2001
+From: Shurisko <thomas.bellettini@epitech.eu>
+Date: Fri, 16 Jun 2023 12:33:12 +0200
+Subject: [PATCH] Patch meta
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+index 7b5ead8e8..35b9d6432 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+@@ -220,11 +220,15 @@ class CraftMetaItem implements ItemMeta, Repairable {
+     @Specific(Specific.To.NBT)
+     static final ItemMetaKey UNBREAKABLE = new ItemMetaKey("Unbreakable"); // Spigot
+ 
++    @Specific(Specific.To.NBT)
++    static final ItemMetaKey ITEM_IDENTIFIER = new ItemMetaKey("Identifier"); // Shurisko
++
+     private String displayName;
+     private List<String> lore;
+     private Map<Enchantment, Integer> enchantments;
+     private int repairCost;
+     private int hideFlag;
++    private String identifier;
+ 
+ 
+     private static final Set<String> HANDLED_TAGS = Sets.newHashSet();
+@@ -237,6 +241,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         }
+ 
+         this.displayName = meta.displayName;
++        this.identifier = meta.identifier;
+ 
+         if (meta.hasLore()) {
+             this.lore = new ArrayList<String>(meta.lore);
+@@ -256,6 +261,8 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         if (tag.hasKey(DISPLAY.NBT)) {
+             NBTTagCompound display = tag.getCompound(DISPLAY.NBT);
+ 
++            if (display.hasKey(ITEM_IDENTIFIER.NBT))
++                this.identifier = limit(display.getString(ITEM_IDENTIFIER.NBT), 1024);
+             if (display.hasKey(NAME.NBT)) {
+                 displayName = limit( display.getString(NAME.NBT), 1024 ); // Spigot
+             }
+-- 
+2.40.1.windows.1
+

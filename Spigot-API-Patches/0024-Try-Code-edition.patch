@@ -1,0 +1,139 @@
+From d7e51c20c51df4bcded08e16f5ceca61e8e4b4d0 Mon Sep 17 00:00:00 2001
+From: Shurisko <thomas.bellettini@epitech.eu>
+Date: Fri, 16 Jun 2023 11:30:40 +0200
+Subject: [PATCH] Try Code edition
+
+
+diff --git a/src/main/java/org/bukkit/inventory/ItemStack.java b/src/main/java/org/bukkit/inventory/ItemStack.java
+index 8323b9b6..6e933860 100644
+--- a/src/main/java/org/bukkit/inventory/ItemStack.java
++++ b/src/main/java/org/bukkit/inventory/ItemStack.java
+@@ -22,7 +22,6 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
+     private MaterialData data = null;
+     private short durability = 0;
+     private ItemMeta meta;
+-    private String itemIdentifier;
+ 
+     @Utility
+     protected ItemStack() {}
+@@ -82,7 +81,6 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
+         this.type = type;
+         this.amount = amount;
+         this.durability = damage;
+-        this.itemIdentifier = "";
+     }
+ 
+     /**
+@@ -96,34 +94,6 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
+         this(type.getId(), amount, damage);
+     }
+ 
+-    /**
+-     * An item stack with the specified damage / durabiltiy
+-     *
+-     * @param type item material
+-     * @param amount stack size
+-     * @deprecated
+-     */
+-    public ItemStack(final Material type, final int amount, String identifier) {
+-        this.type = type.getId();
+-        this.amount = amount;
+-        this.durability = (short) 0;
+-        this.itemIdentifier = identifier;
+-    }
+-
+-    /**
+-     * An item stack with the specified damage / durabiltiy
+-     *
+-     * @param type item material
+-     * @param amount stack size
+-     * @deprecated
+-     */
+-    public ItemStack(final Material type, final int amount, final short damage, String identifier) {
+-        this.type = type.getId();
+-        this.amount = amount;
+-        this.durability =damage;
+-        this.itemIdentifier = identifier;
+-    }
+-
+     /**
+      * @param type the raw type id
+      * @param amount the amount in the stack
+@@ -136,7 +106,6 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
+         this.type = type;
+         this.amount = amount;
+         this.durability = damage;
+-        this.itemIdentifier = "";
+         if (data != null) {
+             createData(data);
+             this.durability = data;
+@@ -168,7 +137,6 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
+         this.amount = stack.getAmount();
+         this.durability = stack.getDurability();
+         this.data = stack.getData();
+-        this.itemIdentifier = "";
+         if (stack.hasItemMeta()) {
+             setItemMeta0(stack.getItemMeta(), getType0());
+         }
+@@ -537,8 +505,6 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
+             result.put("amount", getAmount());
+         }
+ 
+-        result.put("identifier", this.itemIdentifier);
+-
+         ItemMeta meta = getItemMeta();
+         if (!Bukkit.getItemFactory().equals(meta, null)) {
+             result.put("meta", meta);
+@@ -558,7 +524,6 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
+         Material type = Material.getMaterial((String) args.get("type"));
+         short damage = 0;
+         int amount = 1;
+-        String identifier = "";
+ 
+         if (args.containsKey("damage")) {
+             damage = ((Number) args.get("damage")).shortValue();
+@@ -568,10 +533,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
+             amount = ((Number) args.get("amount")).intValue();
+         }
+ 
+-        if (args.containsKey("identifier"))
+-            identifier = (String) args.get("identifier");
+-
+-        ItemStack result = new ItemStack(type, amount, damage, identifier);
++        ItemStack result = new ItemStack(type, amount, damage);
+ 
+         if (args.containsKey("enchantments")) { // Backward compatiblity, @deprecated
+             Object raw = args.get("enchantments");
+@@ -648,15 +610,4 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
+ 
+         return true;
+     }
+-
+-    /**
+-     * ICM Custom Edit
+-     */
+-    public String getItemIdentifier() {
+-        return itemIdentifier;
+-    }
+-
+-    public void setItemIdentifier(String itemIdentifier) {
+-        this.itemIdentifier = itemIdentifier;
+-    }
+ }
+diff --git a/src/main/java/org/bukkit/inventory/meta/ItemMeta.java b/src/main/java/org/bukkit/inventory/meta/ItemMeta.java
+index d8cc8218..0a999a67 100644
+--- a/src/main/java/org/bukkit/inventory/meta/ItemMeta.java
++++ b/src/main/java/org/bukkit/inventory/meta/ItemMeta.java
+@@ -158,6 +158,9 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable {
+     @SuppressWarnings("javadoc")
+     ItemMeta clone();
+ 
++    String getIdentifier();
++    void setIdentifier(String identifier);
++
+     // Spigot start
+     public class Spigot
+     {
+-- 
+2.40.1.windows.1
+

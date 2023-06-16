@@ -1,0 +1,24 @@
+From eef0ca93b3939efdbf64f0e2275d00b979c7d223 Mon Sep 17 00:00:00 2001
+From: Shurisko <thomas.bellettini@epitech.eu>
+Date: Fri, 16 Jun 2023 12:08:32 +0200
+Subject: [PATCH] Patch meta
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+index a5ba6dbb1..59a14e2b4 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+@@ -266,10 +266,6 @@ class CraftMetaItem implements ItemMeta, Repairable {
+             }
+ 
+             if (display.hasKey(ITEM_IDENTIFIER.NBT)) this.identifier = limit(display.getString(ITEM_IDENTIFIER.NBT), 1024);
+-            else {
+-                tag.setString(ITEM_IDENTIFIER.NBT, "");
+-                this.identifier = "";
+-            }
+ 
+             if (display.hasKey(LORE.NBT)) {
+                 NBTTagList list = display.getList(LORE.NBT, 8);
+-- 
+2.40.1.windows.1
+

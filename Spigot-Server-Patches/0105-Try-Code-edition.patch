@@ -1,0 +1,22 @@
+From f9963db82c4a08dde681d94d5131817793fe9d7b Mon Sep 17 00:00:00 2001
+From: Shurisko <thomas.bellettini@epitech.eu>
+Date: Thu, 15 Jun 2023 20:53:22 +0200
+Subject: [PATCH] Try Code edition
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index b56faa62d..350e6f7d3 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -202,7 +202,7 @@ public class CraftEventFactory {
+         Block blockClicked = craftWorld.getBlockAt(position.getX(), position.getY(), position.getZ());
+         BlockFace blockFace = CraftBlock.notchToBlockFace(direction);
+ 
+-
++        org.bukkit.inventory.ItemStack itm = CraftItemStack.asBukkitCopy(itemstack);
+         if (itemInHand.getItemIdentifier().isEmpty())
+             itemInHand.setItemIdentifier(UUID.randomUUID().toString());
+ 
+-- 
+2.40.1.windows.1
+

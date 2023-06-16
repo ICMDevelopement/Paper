@@ -1,0 +1,22 @@
+From 8f9d81c1e7ac4bfb9ba727389ba109400823fb15 Mon Sep 17 00:00:00 2001
+From: Shurisko <thomas.bellettini@epitech.eu>
+Date: Fri, 16 Jun 2023 11:52:33 +0200
+Subject: [PATCH] Patch meta
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+index a919f7b43..a5ba6dbb1 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+@@ -821,7 +821,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
+                 && (this.hasRepairCost() ? that.hasRepairCost() && this.repairCost == that.repairCost : !that.hasRepairCost())
+                 && (this.unhandledTags.equals(that.unhandledTags))
+                 && (this.hideFlag == that.hideFlag)
+-                && (this.identifier.equalsIgnoreCase(that.identifier))
++                && ((this.identifier != null && that.identifier != null) && (this.identifier.equalsIgnoreCase(that.identifier)))
+                 && (this.spigot.isUnbreakable() == that.spigot.isUnbreakable()); // Spigot
+     }
+ 
+-- 
+2.40.1.windows.1
+
