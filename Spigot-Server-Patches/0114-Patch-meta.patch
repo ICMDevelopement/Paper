@@ -1,0 +1,35 @@
+From faf84136fd99372c241f58afc48b210a8e34268d Mon Sep 17 00:00:00 2001
+From: Shurisko <thomas.bellettini@epitech.eu>
+Date: Fri, 16 Jun 2023 13:33:21 +0200
+Subject: [PATCH] Patch meta
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemFactory.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemFactory.java
+index 5404ee91a..a381bb75b 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemFactory.java
+@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.inventory;
+ import java.util.Collection;
+ 
+ import org.apache.commons.lang.Validate;
++import org.bukkit.Bukkit;
+ import org.bukkit.Color;
+ import org.bukkit.Material;
+ import org.bukkit.configuration.serialization.ConfigurationSerialization;
+diff --git a/src/test/java/org/bukkit/craftbukkit/inventory/FactoryItemMaterialTest.java b/src/test/java/org/bukkit/craftbukkit/inventory/FactoryItemMaterialTest.java
+index 1e5c3ef2d..2a773e3c0 100644
+--- a/src/test/java/org/bukkit/craftbukkit/inventory/FactoryItemMaterialTest.java
++++ b/src/test/java/org/bukkit/craftbukkit/inventory/FactoryItemMaterialTest.java
+@@ -126,6 +126,9 @@ public class FactoryItemMaterialTest extends AbstractTestingBase {
+         assertTrue(factory.equals(baseMeta, null));
+         assertTrue(factory.equals(null, baseMeta));
+ 
++        System.out.println("Je lance !");
++        System.out.println(">=" + (baseMetaClone == null));
++        System.out.println("++++" + (baseMeta == null));
+         assertTrue(factory.equals(baseMeta, baseMetaClone));
+         assertTrue(factory.equals(baseMetaClone, baseMeta));
+ 
+-- 
+2.40.1.windows.1
+
